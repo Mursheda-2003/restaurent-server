@@ -24,7 +24,7 @@ const client = new MongoClient(uri, {
 
       const menuCollection = client.db("restaurant").collection("menu");
       const reviewCollection = client.db("restaurant").collection("reviews");
-      const orderCollection = client.db("restaurant").collection("orders");
+      const cartCollection = client.db("restaurant").collection("carts");
 
 
       app.get('/menu', async(req, res)=>{
@@ -36,9 +36,16 @@ const client = new MongoClient(uri, {
         const result =  await reviewCollection.find().toArray()
         res.send(result)
       })
-      // order add to card api
-      app.post('/order', async(req, res)=>{
-        const result =  await orderCollection.insertOne().toArray()
+      // cart add to card api
+      app.post('/carts', async(req, res)=>{
+        const cart = req.body;
+        const result =  await cartCollection.insertOne(cart)
+        res.send(result)
+      })
+      app.get('/carts', async(req, res)=>{
+        const email = req.query.email;
+        const query = {email:email}
+        const result = await cartCollection.find(query).toArray()
         res.send(result)
       })
     } finally {
